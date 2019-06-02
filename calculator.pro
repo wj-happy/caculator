@@ -7,11 +7,13 @@ HEADERS += \
     stack.h \
     stackseq.h \
     input.h \
-    calculator.h
+    calculator.h \
+    tree/Tree.h
 
 SOURCES += \
     stack.cpp \
     stackseq.cpp \
     input.cpp \
     main.cpp \
-    calculator.cpp
+    calculator.cpp \
+    tree/Tree.cpp
