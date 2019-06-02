@@ -1,29 +1,23 @@
 #include <iostream>
-#include "calculator.h"
-#include "stackseq.h"
+#include "parser.h"
 using namespace std;
 
+const int maxBuf = 100;
 
 int main()
 {
-    Calculator theCalculator;
-    bool status;
+    char buf[maxBuf];
+    Status status;
+    SymbolTable symTab;
 
     do
     {
         cout << "> ";
-        Input input;
-        status = theCalculator.Execute(input);
-        if ( status )
-        {
-            for ( StackSeq seq(theCalculator.GetStack());
-                  !seq.AtEnd();
-                  seq.Advance() )
-            {
-                cout << " " << seq.GetNum() << endl;
-            }
-        }
-    } while(status);
+        cin.getline(buf, maxBuf);
+        Scanner scanner(buf);
+        Parser parser(scanner, symTab);
+        status = parser.Eval();
+    } while(status != stQuit);
 
     return 0;
 }

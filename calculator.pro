@@ -8,7 +8,10 @@ HEADERS += \
     stackseq.h \
     input.h \
     calculator.h \
-    tree/Tree.h
+    tree/Tree.h \
+    Scanner.h \
+    parser.h \
+    symboltable.h
 
 SOURCES += \
     stack.cpp \
@@ -16,4 +19,7 @@ SOURCES += \
     input.cpp \
     main.cpp \
     calculator.cpp \
-    tree/Tree.cpp
+    tree/Tree.cpp \
+    Scanner.cpp \
+    parser.cpp \
+    symboltable.cpp
