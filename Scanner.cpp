@@ -5,11 +5,11 @@
 using namespace std;
 
 
-Scanner::Scanner(const char* pszInputExp)
-	: m_pszInputExp(pszInputExp),
-	  m_nCurPos(0)
+Scanner::Scanner(const char* buf)
+    : _buf(buf),
+      _iLook(0)
 {
-	cout << "Scanner with \"" << m_pszInputExp << "\"" << endl;
+    cout << "Scanner with \"" << _buf << "\"" << endl;
 	
 	// 识别第一个记号
 	Accept();
@@ -22,46 +22,46 @@ Scanner::~Scanner()
 
 EToken Scanner::Token() const
 {
-	return m_eToken;
+    return _eToken;
 }
 
 void Scanner::Accept()
 {
 	EatWhite();
 
-	switch (m_pszInputExp[m_nCurPos])
+    switch (_buf[_iLook])
 	{
 	case '+':
-		m_eToken = tAdd;
-		++m_nCurPos;
+        _eToken = tPlus;
+        ++_iLook;
 		break;
 	case '-':
-		m_eToken = tSub;
-		++m_nCurPos;
+        _eToken = tMinus;
+        ++_iLook;
 		break;
 	case '*':
-		m_eToken = tMult;
-		++m_nCurPos;
+        _eToken = tMult;
+        ++_iLook;
 		break;
 	case '/':
-		m_eToken = tDivide;
-		++m_nCurPos;
+        _eToken = tDivide;
+        ++_iLook;
 		break;
 	case '%':
-		m_eToken = tMod;
-		++m_nCurPos;
+        _eToken = tMod;
+        ++_iLook;
 		break;
 	case '(':
-		m_eToken = tLParen;
-		++m_nCurPos;
+        _eToken = tLParen;
+        ++_iLook;
 		break;
 	case ')':
-		m_eToken = tRParen;
-		++m_nCurPos;
+        _eToken = tRParen;
+        ++_iLook;
 		break;
 	case '=':
-		m_eToken = tAssign;
-		++m_nCurPos;
+        _eToken = tAssign;
+        ++_iLook;
 		break;
 	case '0':
 	case '1':
@@ -74,36 +74,39 @@ void Scanner::Accept()
 	case '8':
 	case '9':
 	case '.':
-		m_eToken = tNumber;
+    {
+        _eToken = tNumber;
 		char* pEnd;
-		m_dblNumber = strtod(&m_pszInputExp[m_nCurPos], &pEnd);
-		m_nCurPos = pEnd - m_pszInputExp;
+        //字符串转double
+        _number = strtod(&_buf[_iLook], &pEnd);
+        _iLook = pEnd - _buf;
+    }
 		break;
 	case '\0':
-		m_eToken = tEnd;
+        _eToken = tEnd;
 		break;
 	default:
 		// 以字母或下划线打头的为标识符
-		if (isalpha(m_pszInputExp[m_nCurPos])
-		|| m_pszInputExp[m_nCurPos] == '_')
+        if (isalpha(_buf[_iLook])
+        || _buf[_iLook] == '_')
 		{
-			m_eToken = tIdent;
-			m_nSymStartPos = m_nCurPos;
+            _eToken = tIdent;
+            _lenSymbol = _iLook;
 
 			do 
 			{
-				m_nCurPos++;
-			} while (isalnum(m_pszInputExp[m_nCurPos]) || (m_pszInputExp[m_nCurPos] == '_'));
+                _iLook++;
+            } while (isalnum(_buf[_iLook]) || (_buf[_iLook] == '_'));
 
-			m_nSymLen = m_nCurPos - m_nSymStartPos;
-			if (m_nSymLen >= MAX_SYM_LEN)
+            _iSymbol = _iLook - _lenSymbol;
+            if (_iSymbol >= MAX_SYM_LEN)
 			{
-				m_nSymLen = MAX_SYM_LEN - 1;
+                _iSymbol = MAX_SYM_LEN - 1;
 			}
 		}
 		else
 		{
-			m_eToken = tError;
+            _eToken = tError;
 		}
 		break;
 	}
@@ -111,30 +114,35 @@ void Scanner::Accept()
 
 double Scanner::Number()
 {
-	assert(m_eToken == tNumber);
-	return m_dblNumber;
+    assert(_eToken == tNumber);
+    return _number;
 }
 
 void Scanner::EatWhite()
 {
-	while (isspace(m_pszInputExp[m_nCurPos]))
+    while (isspace(_buf[_iLook]))
 	{
-		m_nCurPos++;
+        _iLook++;
 	}
+}
+
+int Scanner::nSymStartPos() const
+{
+    return _lenSymbol;
 }
 
 void Scanner::GetSymbolName(char* pszSymName, int& nLen)
 {
-	assert(nLen >= MAX_SYM_LEN);
+    assert(nLen >= MAX_SYM_LEN);
 	//assert(m_nSynbolLen <= MAX_SYM_LEN);
 
-	strncpy(pszSymName, &m_pszInputExp[m_nSymStartPos], m_nSymLen);
-	pszSymName[m_nSymLen] = '\0';
-	nLen = m_nSymLen;
+    strncpy(pszSymName, &_buf[_lenSymbol], _iSymbol);
+    pszSymName[_iSymbol] = '\0';
+    nLen = _iSymbol;
 }
 
 const char* Scanner::GetInputExp() const
 {
-	return m_pszInputExp;
+    return _buf;
 }
 

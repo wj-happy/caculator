@@ -22,6 +22,8 @@ public:
 
     Status Eval();
 
+    Status Parse();
+
 private:
     Scanner & _scanner;
     SymbolTable & _symTab;

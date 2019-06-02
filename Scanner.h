@@ -17,8 +17,8 @@ enum EToken
 	tEnd,    // 结尾
 	tError,  // 错误
 	tNumber, // 数字
-	tAdd,    // +
-	tSub,    // -
+    tPlus,    // +
+    tMinus,    // -
 	tMult,   // *
 	tDivide, // /
 	tMod,    // %
@@ -32,7 +32,7 @@ enum EToken
 class Scanner
 {
 public:
-    Scanner(const char* pszInputExp);
+    Scanner(const char* buf);
     ~Scanner();
 
 	EToken Token() const;
@@ -46,27 +46,29 @@ public:
 
 	const char* GetInputExp() const;
 
+    int nSymStartPos() const;
+
 private:
-	// 略过输入中的空格
-	void EatWhite();
+    // 略过输入中的空格
+    void EatWhite();
 
 private:
 	// 存放一行文本的文本缓冲器
 	// 最大长度由MAX_EXP_LEN控制
-	const char* const m_pszInputExp;
+    const char* const _buf;
 	
 	// 当前的扫描位置 
-	int m_nCurPos;
+    int _iLook;
 
 	// 当前记号
-	EToken m_eToken;
+    EToken _eToken;
 
 	// 存放记号为tNumber对应的浮点数
-	double m_dblNumber;
+    double _number;
 
 	// 符号名的起始位置
-	int m_nSymStartPos;
+    int _lenSymbol;
 	// 符号名的长度
-	int m_nSymLen;
+    int _iSymbol;
 };
 
