@@ -11,7 +11,12 @@ HEADERS += \
     tree/Tree.h \
     Scanner.h \
     parser.h \
-    symboltable.h
+    symboltable.h \
+    HTable.h \
+    List.h \
+    Store.h \
+    SymTab.h \
+    FunTab.h
 
 SOURCES += \
     stack.cpp \
@@ -22,4 +27,9 @@ SOURCES += \
     tree/Tree.cpp \
     Scanner.cpp \
     parser.cpp \
-    symboltable.cpp
+    symboltable.cpp \
+    List.cpp \
+    Store.cpp \
+    SymTab.cpp \
+    HTable.cpp \
+    FunTab.cpp
