@@ -7,9 +7,10 @@
 //
 
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
 
-const int MAX_SYM_LEN = 10;
+#include <cassert>
+
+const int maxSymLen = 10;
 
 // 记号
 enum EToken
@@ -25,7 +26,7 @@ enum EToken
 	tLParen, // (
 	tRParen, // )
 	tAssign, // =
-	tIdent   // x, pi等符号名(标识符)
+    tIdent   // x, pi,a,b等符号名(标识符)
 
 };
 
@@ -37,7 +38,7 @@ public:
 
 	EToken Token() const;
 
-	void Accept();
+    EToken Accept();
 
 	// 将记号为tNumber的转换为浮点数
 	double Number();
@@ -61,7 +62,7 @@ private:
     int _iLook;
 
 	// 当前记号
-    EToken _eToken;
+    EToken _token;
 
 	// 存放记号为tNumber对应的浮点数
     double _number;

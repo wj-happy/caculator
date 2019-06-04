@@ -22,99 +22,85 @@ Scanner::~Scanner()
 
 EToken Scanner::Token() const
 {
-    return _eToken;
+    return _token;
 }
 
-void Scanner::Accept()
+EToken Scanner::Accept()
 {
-	EatWhite();
-
+    //去除空格
+    EatWhite ();
     switch (_buf[_iLook])
-	{
-	case '+':
-        _eToken = tPlus;
-        ++_iLook;
-		break;
-	case '-':
-        _eToken = tMinus;
-        ++_iLook;
-		break;
-	case '*':
-        _eToken = tMult;
-        ++_iLook;
-		break;
-	case '/':
-        _eToken = tDivide;
-        ++_iLook;
-		break;
-	case '%':
-        _eToken = tMod;
-        ++_iLook;
-		break;
-	case '(':
-        _eToken = tLParen;
-        ++_iLook;
-		break;
-	case ')':
-        _eToken = tRParen;
-        ++_iLook;
-		break;
-	case '=':
-        _eToken = tAssign;
-        ++_iLook;
-		break;
-	case '0':
-	case '1':
-	case '2':
-	case '3':
-	case '4':
-	case '5':
-	case '6':
-	case '7':
-	case '8':
-	case '9':
-	case '.':
     {
-        _eToken = tNumber;
-		char* pEnd;
-        //字符串转double
-        _number = strtod(&_buf[_iLook], &pEnd);
-        _iLook = pEnd - _buf;
+    case '+':
+        _token = tPlus;
+        ++_iLook;
+        break;
+    case '-':
+        _token = tMinus;
+        ++_iLook;
+        break;
+    case '*':
+        _token = tMult;
+        ++_iLook;
+        break;
+    case '/':
+        _token = tDivide;
+        ++_iLook;
+        break;
+    case '=':
+        _token = tAssign;
+        ++_iLook;
+        break;
+    case '(':
+        _token = tLParen;
+        ++_iLook;
+        break;
+    case ')':
+        _token = tRParen;
+        ++_iLook;
+        break;
+    case '0': case '1': case '2': case '3': case '4':
+    case '5': case '6': case '7': case '8': case '9':
+    case '.':
+        {
+            _token = tNumber;
+            char *p;
+            _number = std::strtod(&_buf[_iLook], &p);	//string->double, p: Pointer to character that stops scan
+            _iLook = p - _buf;
+        }
+        break;
+    case '\0': // end of input
+        _token = tEnd;
+        break;
+    default:    // 变量
+        if (isalpha(_buf[_iLook]) || (_buf[_iLook] == '_'))
+        {
+            _token = tIdent;
+            //计算符号变量的长度
+            _iSymbol = _iLook;
+            int cLook;
+            do
+            {
+                cLook = _buf[++_iLook];
+            } while (isalnum(cLook) || cLook == '_');
+            _lenSymbol = _iLook - _iSymbol;
+            if (_lenSymbol >= maxSymLen)
+            {
+                _lenSymbol = maxSymLen - 1;
+            }
+        }
+        else
+        {
+            _token = tError;
+        }
+        break;
     }
-		break;
-	case '\0':
-        _eToken = tEnd;
-		break;
-	default:
-		// 以字母或下划线打头的为标识符
-        if (isalpha(_buf[_iLook])
-        || _buf[_iLook] == '_')
-		{
-            _eToken = tIdent;
-            _lenSymbol = _iLook;
 
-			do 
-			{
-                _iLook++;
-            } while (isalnum(_buf[_iLook]) || (_buf[_iLook] == '_'));
-
-            _iSymbol = _iLook - _lenSymbol;
-            if (_iSymbol >= MAX_SYM_LEN)
-			{
-                _iSymbol = MAX_SYM_LEN - 1;
-			}
-		}
-		else
-		{
-            _eToken = tError;
-		}
-		break;
-	}
+    return _token;
 }
-
 double Scanner::Number()
 {
-    assert(_eToken == tNumber);
+    assert(_token == tNumber);
     return _number;
 }
 
@@ -131,14 +117,13 @@ int Scanner::nSymStartPos() const
     return _lenSymbol;
 }
 
-void Scanner::GetSymbolName(char* pszSymName, int& nLen)
+void Scanner::GetSymbolName(char *strOut, int &len)
 {
-    assert(nLen >= MAX_SYM_LEN);
-	//assert(m_nSynbolLen <= MAX_SYM_LEN);
-
-    strncpy(pszSymName, &_buf[_lenSymbol], _iSymbol);
-    pszSymName[_iSymbol] = '\0';
-    nLen = _iSymbol;
+    assert(len >= maxSymLen);
+    assert(_lenSymbol <= maxSymLen);
+    std::strncpy(strOut, &_buf[_iSymbol], _lenSymbol);
+    strOut[_lenSymbol] = '\0';
+    len = _lenSymbol;
 }
 
 const char* Scanner::GetInputExp() const

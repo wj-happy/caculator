@@ -4,8 +4,8 @@ class SymbolTable;
 
 const int maxIdFun = 16;
 
-// º¯ÊıÖ¸Õë
-typedef double(*PtrFun)(double);  //typedef ·µ»ØÀàĞÍ(*ĞÂÀàĞÍ)(²ÎÊı±í)
+// å‡½æ•°æŒ‡é’ˆ
+typedef double(*PtrFun)(double);  //typedef è¿”å›ç±»å‹(*æ–°ç±»å‹)(å‚æ•°è¡¨)
 
 class FunctionEntry 
 { 

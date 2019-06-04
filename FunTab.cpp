@@ -29,7 +29,8 @@ FunctionEntry funArr[maxIdFun] =
 FunctionTable::FunctionTable(SymbolTable &symTab, FunctionEntry funArr[])
 	: _size(0)
 {
-	for (int i=0; i<maxIdFun; ++i)
+    std::cout << "*******FunctionTable********" << std::endl;
+    for (int i=0; i<maxIdFun; ++i)
 	{
 		int len = strlen(funArr[i].strFun);
 		if (len == 0)
@@ -42,6 +43,7 @@ FunctionTable::FunctionTable(SymbolTable &symTab, FunctionEntry funArr[])
 		assert(i == j);
 		++_size;
 	}
+    std::cout << "**************************" << std::endl;
 }
 
 double CoTan (double x) 
