@@ -169,10 +169,15 @@ Node * Parser::Factor()
             pNode = new VarNode(id, _store);
         }
     }
-    else if (token == tMinus)
+    else if (token == tMinus)   //一元减
     {
         _scanner.Accept();
         pNode = new UMinusNode(Factor());
+    }
+    else if ( token == tPlus )  //一元加
+    {
+        _scanner.Accept();
+        pNode = new UPlusNode(Factor());
     }
     else
     {

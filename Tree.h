@@ -8,6 +8,7 @@
 
 #include "FunTab.h"
 #include <cassert>
+#include <iostream>
 
 class Store;
 
@@ -22,6 +23,10 @@ public:
     virtual void Assign (double)
     {
         assert (!"Assign called incorrectly");
+    }
+    virtual void Print(int indent=0) const
+    {
+        std::cout << indent << std::endl;
     }
 };
 
@@ -54,6 +59,7 @@ public:
 	AddNode (Node * pLeft, Node * pRight)
 		: BinNode (pLeft, pRight) {}
 	double Calc () const;
+    void Print(int indent=0) const;
 };
 
 class SubNode: public BinNode
@@ -132,6 +138,15 @@ class UMinusNode: public UniNode
 public:
     UMinusNode (Node * pNode)
         : UniNode (pNode) {}
+    double Calc () const;
+};
+
+// 一元加运算符
+class UPlusNode : public UniNode
+{
+public:
+    UPlusNode (Node * pNode)
+        : UniNode(pNode) {}
     double Calc () const;
 };
 

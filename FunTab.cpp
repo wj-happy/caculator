@@ -5,6 +5,7 @@
 #include <cmath>
 
 double CoTan(double x);
+double Cube (double x);
 
 // 字符串和函数的映射表
 FunctionEntry funArr[maxIdFun] =
@@ -23,6 +24,8 @@ FunctionEntry funArr[maxIdFun] =
     std::asin,	"asin",
     std::acos,	"acos",
     std::atan,	"atan",
+    std::sqrt,  "sqr",
+    Cube, "cube",
 	0,		""			//??
 };
 
@@ -55,4 +58,10 @@ double CoTan (double x)
 		return HUGE_VAL;
 	}
 	return 1.0 / y;
+}
+
+double Cube (double x)
+{
+    double y = std::pow(x, 1.0/3);
+    return y;
 }

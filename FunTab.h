@@ -2,7 +2,7 @@
 
 class SymbolTable;
 
-const int maxIdFun = 16;
+const int maxIdFun = 18;
 
 // 函数指针
 typedef double(*PtrFun)(double);  //typedef 返回类型(*新类型)(参数表)

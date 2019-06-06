@@ -3,6 +3,14 @@
 #include <iostream>
 #include <cmath>
 
+void Indent( int indent )
+{
+    for ( int i=0; i<indent; ++i )
+    {
+        std::cout << ' ';
+    }
+}
+
 double NumNode::Calc () const
 {
 	std::cout << "Numeric node " << _num << std::endl;
@@ -23,7 +31,16 @@ UniNode::~UniNode ()
 double AddNode::Calc () const
 {
 	std::cout << "Adding\n";
-	return _pLeft->Calc () + _pRight->Calc ();
+    return _pLeft->Calc () + _pRight->Calc ();
+}
+
+void AddNode::Print(int indent) const
+{
+    _pLeft->Print(indent + 2);
+    Indent(indent);
+    std::cout << "+" << std::endl;
+    _pRight->Print(indent + 2);
+    std::cout << std::endl;
 }
 
 double SubNode::Calc () const
@@ -97,4 +114,11 @@ void VarNode::Assign (double val)
 bool VarNode::IsLvalue () const
 {
     return true;
+}
+
+
+double UPlusNode::Calc() const
+{
+    std::cout << "Unary plus\n";
+    return _pChild->Calc();
 }
