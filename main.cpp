@@ -14,7 +14,7 @@ int main()
     char buf[maxBuf];
     Status status;
     SymbolTable symTab(maxSymbols);
-    FunctionTable funTab(symTab, funArr);
+    FunctionTable funTab(symTab);
     Store store(maxSymbols, symTab);
 
     do
@@ -22,8 +22,25 @@ int main()
         cout << "> ";
         cin.getline(buf, maxBuf);
         Scanner scanner(buf);
-        Parser parser(scanner, store, funTab, symTab);
-        status = parser.Eval();
+        if ( !scanner.IsEmpty() )
+        {
+            Parser parser(scanner, store, funTab, symTab);
+            status = parser.Parse();
+            //计算和打印分离
+            if ( stOk == status )
+            {
+                double result = parser.Calculate();
+                std::cout << "result is " << result << std::endl;
+            }
+            else
+            {
+                std::cout << "Syntax error.\n";
+            }
+        }
+        else
+        {
+            break;
+        }
     } while(status != stQuit);
 
     return 0;

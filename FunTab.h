@@ -2,8 +2,6 @@
 
 class SymbolTable;
 
-const int maxIdFun = 18;
-
 // 函数指针
 typedef double(*PtrFun)(double);  //typedef 返回类型(*新类型)(参数表)
 
@@ -19,12 +17,12 @@ public:
 class FunctionTable
 {
 public:
-	FunctionTable(SymbolTable &symTab, FunctionEntry funArr[]);
+    FunctionTable(SymbolTable &symTab);
+    ~FunctionTable();
 	int Size () const { return _size; }
 	PtrFun GetFun(int id) const { return _pFun [id]; }
 private:
-	PtrFun	_pFun[maxIdFun];
+    static FunctionEntry _functionArray[];
+    PtrFun	*_pFun;
 	int		_size;
 };
-
-extern FunctionEntry funArr[];

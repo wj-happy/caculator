@@ -21,20 +21,6 @@ Parser::~Parser ()
     delete _pTree;
 }
 
-Status Parser::Eval ()
-{
-    Parse();
-    if (_status == stOk)
-    {
-        Execute();
-    }
-    else
-    {
-        _status = stQuit;
-    }
-    return _status;
-}
-
 void Parser::Execute()
 {
     if (_pTree)
@@ -44,9 +30,23 @@ void Parser::Execute()
     }
 }
 
-void Parser::Parse()
+Status Parser::Parse()
 {
+    //一切都是表达式
     _pTree = Expr();
+    if ( !_scanner.IsDone() )
+    {
+        _status = stError;
+    }
+
+    return _status;
+}
+
+double Parser::Calculate() const
+{
+    assert(_status == stOk);
+    assert(_pTree != 0);
+    return _pTree->Calc();
 }
 
 Node * Parser::Expr()
@@ -132,9 +132,8 @@ Node * Parser::Factor()
     }
     else if (token == tIdent)
     {
-        char strSymbol[maxSymLen];
-        int lenSym = maxSymLen;
-        _scanner.GetSymbolName(strSymbol, lenSym);
+        char strSymbol[maxSymLen+1];
+        _scanner.GetSymbolName(strSymbol, maxSymLen+1);
         int id = _symTab.Find(strSymbol);
         _scanner.Accept();
         if (_scanner.Token() == tLParen)
@@ -164,7 +163,7 @@ Node * Parser::Factor()
         {
             if (id == idNotFound)
             {
-                id = _symTab.ForceAdd(strSymbol, lenSym);
+                id = _symTab.ForceAdd(strSymbol, maxSymLen);
             }
             pNode = new VarNode(id, _store);
         }

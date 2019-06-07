@@ -84,9 +84,9 @@ EToken Scanner::Accept()
                 cLook = _buf[++_iLook];
             } while (isalnum(cLook) || cLook == '_');
             _lenSymbol = _iLook - _iSymbol;
-            if (_lenSymbol >= maxSymLen)
+            if (_lenSymbol > maxSymLen)
             {
-                _lenSymbol = maxSymLen - 1;
+                _lenSymbol = maxSymLen;
             }
         }
         else
@@ -117,13 +117,23 @@ int Scanner::nSymStartPos() const
     return _lenSymbol;
 }
 
-void Scanner::GetSymbolName(char *strOut, int &len)
+bool Scanner::IsDone() const
 {
-    assert(len >= maxSymLen);
-    assert(_lenSymbol <= maxSymLen);
+    return _buf[_iLook] == '\0';
+}
+
+bool Scanner::IsEmpty() const
+{
+    return _token == tEnd || _token == tError;
+}
+
+int Scanner::GetSymbolName(char *strOut, int lenBuf)
+{
+    assert(lenBuf > maxSymLen);
+    assert(_lenSymbol < lenBuf);
     std::strncpy(strOut, &_buf[_iSymbol], _lenSymbol);
     strOut[_lenSymbol] = '\0';
-    len = _lenSymbol;
+    return _lenSymbol;
 }
 
 const char* Scanner::GetInputExp() const

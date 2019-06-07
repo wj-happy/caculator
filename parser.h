@@ -25,11 +25,11 @@ public:
             SymbolTable & symTab);
     ~Parser();
 
-    //解析输入并进行计算
-    Status Eval();
+    Status Parse();
+
+    double Calculate() const;
 
 private:
-    void Parse();
     Node * Expr();
     Node * Term();
     Node * Factor();

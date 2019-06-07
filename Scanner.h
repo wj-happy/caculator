@@ -43,11 +43,15 @@ public:
 	// 将记号为tNumber的转换为浮点数
 	double Number();
 
-	void GetSymbolName(char* pszSymName, int& nLen);
+    int GetSymbolName(char* pszSymName, int lenBuf);
 
 	const char* GetInputExp() const;
 
     int nSymStartPos() const;
+
+    bool IsDone() const;
+
+    bool IsEmpty() const;
 
 private:
     // 略过输入中的空格
@@ -67,9 +71,9 @@ private:
 	// 存放记号为tNumber对应的浮点数
     double _number;
 
-	// 符号名的起始位置
+    // 符号名的长度
     int _lenSymbol;
-	// 符号名的长度
+    // 符号名的起始位置
     int _iSymbol;
 };
 

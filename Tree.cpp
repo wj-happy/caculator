@@ -65,7 +65,7 @@ double DivideNode::Calc () const
     }
     else
     {
-        std::cout << "Error: Division by zero\n";
+        std::cerr << "Error: Division by zero\n";
         return HUGE_VAL;
     }
 }
