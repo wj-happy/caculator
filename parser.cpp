@@ -52,20 +52,20 @@ double Parser::Calculate() const
 Node * Parser::Expr()
 {
     Node *pNode = Term();
-    cout << "--term: " << pNode->Calc() << endl;
     EToken token = _scanner.Token();
 
-    if (token == tPlus)
+    if (token == tPlus || token == tMinus)
     {
-        _scanner.Accept();
-        Node *pRight = Expr();
-        pNode = new AddNode(pNode, pRight);
-    }
-    else if (token == tMinus)
-    {
-        _scanner.Accept ();
-        Node * pRight = Expr ();
-        pNode = new SubNode (pNode, pRight);
+        MultiNode *pMultiNode = new SumNode(pNode);
+        do
+        {
+            _scanner.Accept();
+            Node *pRight = Term();
+            pMultiNode->AddChild(pRight, (token==tPlus));
+            token = _scanner.Token();
+        } while(token == tPlus || token == tMinus);
+
+        pNode = pMultiNode;
     }
     else if (token == tAssign)
     {
@@ -89,19 +89,21 @@ Node * Parser::Expr()
 Node * Parser::Term()
 {
     Node *pNode = Factor();
-    cout << "--Factor: " << pNode->Calc() << endl;
 
-    if (_scanner.Token() == tMult)
+    EToken token = _scanner.Token();
+
+    if (token == tMult || token == tDivide)
     {
-        _scanner.Accept();
-        Node *pRight = Term();
-        pNode = new MultNode(pNode, pRight);
-    }
-    else if (_scanner.Token() == tDivide)
-    {
-        _scanner.Accept();
-        Node *pRight = Term();
-        pNode = new DivideNode(pNode, pRight);
+        MultiNode *pMultiNode = new ProductNode(pNode);
+        do
+        {
+            _scanner.Accept();
+            Node *pRight = Factor();
+            pMultiNode->AddChild(pRight, (token==tMult));
+            token = _scanner.Token();
+        } while(token==tMult || token==tDivide);
+
+        pNode = pMultiNode;
     }
 
     return pNode;
@@ -163,9 +165,19 @@ Node * Parser::Factor()
         {
             if (id == idNotFound)
             {
-                id = _symTab.ForceAdd(strSymbol, maxSymLen);
+                id = _symTab.ForceAdd(strSymbol);
+                if ( id == idNotFound )
+                {
+                    std::cerr << "Error: too many variables\n";
+                    _status = stError;
+                    pNode = 0;
+                }
             }
-            pNode = new VarNode(id, _store);
+
+            if ( id != idNotFound )
+            {
+                pNode = new VarNode(id, _store);
+            }
         }
     }
     else if (token == tMinus)   //一元减

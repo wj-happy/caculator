@@ -1,4 +1,5 @@
 #include "SymTab.h"
+#include "idseq.h"
 #include <iostream>
 #include <cassert>
 
@@ -14,8 +15,12 @@ SymbolTable::~SymbolTable()
 	delete []_offStr;
 }
 
-int SymbolTable::ForceAdd (char const * str, int len)
+int SymbolTable::ForceAdd (char const * str)
 {
+    assert(str);
+    int len = strlen(str);
+    assert(len > 0);
+
 	// is there enough space?
 	if (_curId == _maxId || !_strBuf.WillFit (len))
 	{
@@ -30,20 +35,17 @@ int SymbolTable::ForceAdd (char const * str, int len)
 	return _curId - 1;
 }
 
+// 不暴露哈希表内部细节
 int SymbolTable::Find (char const * str) const
 {
-	// Get a short list from hash table
-	List const & list = _htab.Find (str);
-	// Iterate over this list
-	for (Link const * pLink = list.GetHead ();
-		pLink != 0; 
-		pLink = pLink->Next ())
-	{
-		int id = pLink->Id ();
-		int offStr = _offStr [id];
-		if (_strBuf.IsEqual (offStr, str))
-			return id;
-	}
+    for ( IdSeq seq(_htab, str); !seq.AtEnd(); seq.Advance() )
+    {
+        int id = seq.GetId();
+        int offStr = _offStr [id];
+        if (_strBuf.IsEqual (offStr, str))
+            return id;
+    }
+
 	return idNotFound;
 }
 

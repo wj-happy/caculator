@@ -15,7 +15,8 @@ HEADERS += \
     List.h \
     Store.h \
     SymTab.h \
-    FunTab.h
+    FunTab.h \
+    idseq.h
 
 SOURCES += \
     stack.cpp \
@@ -30,4 +31,5 @@ SOURCES += \
     Store.cpp \
     SymTab.cpp \
     HTable.cpp \
-    FunTab.cpp
+    FunTab.cpp \
+    idseq.cpp

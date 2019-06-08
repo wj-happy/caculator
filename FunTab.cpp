@@ -35,10 +35,9 @@ FunctionTable::FunctionTable(SymbolTable &symTab)
     std::cout << "*******FunctionTable********" << std::endl;
     for (int i=0; i<_size; ++i)
 	{
-        int len = strlen(_functionArray[i].strFun);
         _pFun[i] = _functionArray[i].pFun;
         std::cout << _functionArray[i].strFun << std::endl;
-        int j = symTab.ForceAdd(_functionArray[i].strFun, len);
+        int j = symTab.ForceAdd(_functionArray[i].strFun);
 		assert(i == j);
 	}
     std::cout << "**************************" << std::endl;

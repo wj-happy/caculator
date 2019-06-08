@@ -4,6 +4,7 @@
 
 class HTable	//实现字符串到整数的映射
 {
+    friend class IdSeq;
 public:
     //显示构造函数
 	explicit HTable(int size) : _size(size)

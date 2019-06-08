@@ -122,3 +122,81 @@ double UPlusNode::Calc() const
     std::cout << "Unary plus\n";
     return _pChild->Calc();
 }
+
+MultiNode::MultiNode(Node *pNode)
+    : _isError(false)
+{
+    _aChild[0] = pNode;
+    _aIsPositive[0] = true;
+    _iCur = 1;
+}
+
+void MultiNode::AddChild(Node *pNode, bool isPositive)
+{
+    if ( _iCur == MAX_CHILDREN )
+    {
+        _isError = true;
+        return;
+    }
+    _aChild[_iCur] = pNode;
+    _aIsPositive[_iCur] = isPositive;
+    ++_iCur;
+}
+
+double SumNode::Calc() const
+{
+    if ( _isError )
+    {
+        std::cerr << "Error: too many terms\n";
+        return 0.0;
+    }
+
+    double sum = 0.0;
+    for ( int i=0; i<_iCur; ++i )
+    {
+        double val = _aChild[i]->Calc();
+        if ( _aIsPositive[i] )
+        {
+            sum += val;
+        }
+        else
+        {
+            sum -= val;
+        }
+    }
+
+    return sum;
+}
+
+double ProductNode::Calc() const
+{
+    if ( _isError )
+    {
+        std::cerr << "Error: too many terms\n";
+        return 0.0;
+    }
+
+    double sum = 1;
+    for ( int i=0; i<_iCur; ++i )
+    {
+        double val = _aChild[i]->Calc();
+        if ( _aIsPositive[i] )
+        {
+            sum *= val;
+        }
+        else
+        {
+            if ( val < 0.000001 && val > -0.000001 )
+            {
+                std::cerr << "Error: zero";
+                return HUGE_VAL;
+            }
+            else
+            {
+                sum /= val;
+            }
+        }
+    }
+
+    return sum;
+}

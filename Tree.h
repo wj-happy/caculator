@@ -52,6 +52,35 @@ protected:
 	Node * const _pRight;
 };
 
+const int MAX_CHILDREN = 8;
+// 一般性多节点
+class MultiNode : public Node
+{
+public:
+    MultiNode(Node *pNode);
+    ~MultiNode() {}
+    void AddChild(Node *pNode, bool isPositive);
+protected:
+    bool _isError;
+    int _iCur;
+    Node * _aChild[MAX_CHILDREN];
+    bool _aIsPositive[MAX_CHILDREN];
+};
+
+class SumNode : public MultiNode
+{
+public:
+    SumNode(Node *pNode) : MultiNode(pNode) {}
+    double Calc() const;
+};
+
+class ProductNode : public MultiNode
+{
+public:
+    ProductNode(Node *pNode) : MultiNode(pNode) {}
+    double Calc() const;
+};
+
 // +
 class AddNode: public BinNode
 {

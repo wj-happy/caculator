@@ -15,7 +15,7 @@ public:
 	explicit SymbolTable (int size);
 	~SymbolTable();
 
-	int ForceAdd (char const * str, int len);
+    int ForceAdd (char const * str);
 	int Find (char const * str) const;
 	char const * GetString (int id) const;
 private:

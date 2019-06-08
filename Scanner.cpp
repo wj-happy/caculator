@@ -29,6 +29,7 @@ EToken Scanner::Accept()
 {
     //去除空格
     EatWhite ();
+    std::cout << "---Accept: " << _buf[_iLook] << ", " << _iLook << std::endl;
     switch (_buf[_iLook])
     {
     case '+':
@@ -119,6 +120,7 @@ int Scanner::nSymStartPos() const
 
 bool Scanner::IsDone() const
 {
+    std::cout << "----IsDone: " << _buf << _iLook << endl;
     return _buf[_iLook] == '\0';
 }
 
