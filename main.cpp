@@ -13,7 +13,7 @@ int main()
 {
     char buf[maxBuf];
     Status status;
-    SymbolTable symTab(maxSymbols);
+    SymbolTable symTab;
     FunctionTable funTab(symTab);
     Store store(maxSymbols, symTab);
 

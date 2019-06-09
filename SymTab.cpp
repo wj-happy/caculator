@@ -2,36 +2,18 @@
 #include <iostream>
 #include <cassert>
 
-SymbolTable::SymbolTable(int size)
-	: _curId(0), _maxId(size),
-	  _htab(size+1), _strBuf(size*10)
+SymbolTable::SymbolTable()
+    : _curId(0),
+      _htab(hTabSize), _offStr(0)
 {
-	_offStr = new int[size];
-}
-
-SymbolTable::~SymbolTable()
-{
-	delete []_offStr;
 }
 
 int SymbolTable::ForceAdd (char const * str)
 {
-    assert(str);
-    int len = strlen(str);
-    assert(len > 0);
-
-	// is there enough space?
-	if (_curId == _maxId || !_strBuf.WillFit (len))
-	{
-		return idNotFound;
-	}
-	// point to the place where the string will be stored
-	_offStr [_curId] = _strBuf.GetOffset ();
-	_strBuf.Add (str);
-	// add mapping to hash table
-	_htab.Add (str, _curId);
-	++_curId;
-	return _curId - 1;
+    int offset = _strBuf.Add(str);
+    _offStr.Set(_curId, offset);
+    _htab.Add(str, _curId);
+    return _curId++;    //后自增
 }
 
 // 不暴露哈希表内部细节
@@ -41,7 +23,7 @@ int SymbolTable::Find (char const * str) const
           !seq.AtEnd(); seq.Advance() )
     {
         int id = seq.GetValue();
-        int offStr = _offStr [id];
+        int offStr = _offStr[id];
         if (_strBuf.IsEqual (offStr, str))
             return id;
     }
@@ -52,6 +34,6 @@ int SymbolTable::Find (char const * str) const
 char const * SymbolTable::GetString (int id) const
 {
 	assert ((id >= 0) && (id < _curId));
-	int offStr = _offStr [id];
+    int offStr = _offStr[id];
 	return _strBuf.GetString (offStr);
 }

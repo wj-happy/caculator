@@ -6,14 +6,15 @@
 
 #include "StrBuf.h"
 #include "HTable.h"
-
-const int idNotFound = -1;
+#include "dynarray.h"
 
 class SymbolTable		//符号表
 { 
+    enum { hTabSize = 65 };
 public: 
-	explicit SymbolTable (int size);
-	~SymbolTable();
+    enum { idNotFound = -1 };
+
+    SymbolTable ();
 
     int ForceAdd (char const * str);
 	int Find (char const * str) const;
@@ -22,7 +23,7 @@ private:
 	HTable			_htab;	 // string -> ids
 	int				_maxId;
     //字符串在缓冲器中的偏移
-	int			  * _offStr; // id -> offset
+    DynArray<int>	 _offStr; // id -> offset
 	int				_curId;
 	StringBuffer	_strBuf; // offset -> string
 };

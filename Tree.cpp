@@ -124,33 +124,22 @@ double UPlusNode::Calc() const
 }
 
 MultiNode::MultiNode(Node *pNode)
-    : _isError(false)
+    : _aChild(0)
+    , _aIsPositive(false)
+    , _iCur(0)
 {
-    _aChild[0] = pNode;
-    _aIsPositive[0] = true;
-    _iCur = 1;
+    AddChild(pNode, true);
 }
 
 void MultiNode::AddChild(Node *pNode, bool isPositive)
 {
-    if ( _iCur == MAX_CHILDREN )
-    {
-        _isError = true;
-        return;
-    }
-    _aChild[_iCur] = pNode;
-    _aIsPositive[_iCur] = isPositive;
+    _aChild.Set(_iCur, pNode);
+    _aIsPositive.Set(_iCur, isPositive);
     ++_iCur;
 }
 
 double SumNode::Calc() const
 {
-    if ( _isError )
-    {
-        std::cerr << "Error: too many terms\n";
-        return 0.0;
-    }
-
     double sum = 0.0;
     for ( int i=0; i<_iCur; ++i )
     {
@@ -170,12 +159,6 @@ double SumNode::Calc() const
 
 double ProductNode::Calc() const
 {
-    if ( _isError )
-    {
-        std::cerr << "Error: too many terms\n";
-        return 0.0;
-    }
-
     double sum = 1;
     for ( int i=0; i<_iCur; ++i )
     {

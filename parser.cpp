@@ -151,7 +151,7 @@ Node * Parser::Factor()
                 _status = stError;
             }
 
-            if (id != idNotFound && id < _funTab.Size ())
+            if (id != SymbolTable::idNotFound && id < _funTab.Size ())
             {
                 pNode = new FunNode (_funTab.GetFun (id), pNode);
             }
@@ -163,21 +163,13 @@ Node * Parser::Factor()
         }
         else
         {
-            if (id == idNotFound)
+            if (id == SymbolTable::idNotFound)
             {
                 id = _symTab.ForceAdd(strSymbol);
-                if ( id == idNotFound )
-                {
-                    std::cerr << "Error: too many variables\n";
-                    _status = stError;
-                    pNode = 0;
-                }
             }
 
-            if ( id != idNotFound )
-            {
-                pNode = new VarNode(id, _store);
-            }
+            assert( id != SymbolTable::idNotFound );
+            pNode = new VarNode(id, _store);
         }
     }
     else if (token == tMinus)   //一元减

@@ -7,6 +7,7 @@
  */
 
 #include "FunTab.h"
+#include "dynarray.h"
 #include <cassert>
 #include <iostream>
 
@@ -52,7 +53,6 @@ protected:
 	Node * const _pRight;
 };
 
-const int MAX_CHILDREN = 8;
 // 一般性多节点
 class MultiNode : public Node
 {
@@ -61,10 +61,9 @@ public:
     ~MultiNode() {}
     void AddChild(Node *pNode, bool isPositive);
 protected:
-    bool _isError;
     int _iCur;
-    Node * _aChild[MAX_CHILDREN];
-    bool _aIsPositive[MAX_CHILDREN];
+    DynArray<Node*> _aChild;
+    DynArray<bool> _aIsPositive;
 };
 
 class SumNode : public MultiNode
