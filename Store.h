@@ -5,6 +5,7 @@
  */
 
 #include <cassert>
+#include <vector>
 
 class SymbolTable;	//前向声明
 
@@ -13,33 +14,28 @@ enum { stNotInit, stInit };
 class Store
 {
 public:
-	Store(int size, SymbolTable &symTab);
-	~Store(void)
+    static const std::size_t idNotFound = 0xffffffff;
+    Store(SymbolTable &symTab);
+    bool IsInit(std::size_t id) const
 	{
-		delete []_cell;
-		delete []_status;
-	}
-	bool IsInit(int id) const
-	{
-		return ((id < _size) && (_status[id] != stNotInit));
+        assert(id != idNotFound);
+        return ((id < _isInit.size()) && _isInit[id]);
 	}
 	double Value (int id) const
 	{
 		assert (IsInit (id));
 		return _cell [id];
 	}
-	void SetValue (int id, double val)
+
+    void AddValue (std::size_t id, double val)
 	{
-		if (id < _size)
-		{
-			_cell [id] = val;
-			_status [id] = stInit;
-		}
+        assert(id >= 0);
+        _cell.resize(id+1);
+        _isInit.resize(id+1);
+        _cell[id] = val;
+        _isInit[id] = true;
 	}
 private:
-	int				_size;
-    //单元数组
-	double			*_cell;
-    //状态数组
-	unsigned char	*_status;
+    std::vector<double> _cell;
+    std::vector<bool> _isInit;
 };

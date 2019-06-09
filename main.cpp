@@ -7,7 +7,6 @@
 using namespace std;
 
 const int maxBuf = 100;
-const int maxSymbols = 40;
 
 int main()
 {
@@ -15,7 +14,7 @@ int main()
     Status status;
     SymbolTable symTab;
     FunctionTable funTab(symTab);
-    Store store(maxSymbols, symTab);
+    Store store(symTab);
 
     do
     {

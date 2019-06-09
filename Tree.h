@@ -10,6 +10,7 @@
 #include "dynarray.h"
 #include <cassert>
 #include <iostream>
+#include <vector>
 
 class Store;
 
@@ -61,9 +62,8 @@ public:
     ~MultiNode() {}
     void AddChild(Node *pNode, bool isPositive);
 protected:
-    int _iCur;
-    DynArray<Node*> _aChild;
-    DynArray<bool> _aIsPositive;
+    std::vector<Node*> _aChild;
+    std::vector<bool> _aIsPositive;
 };
 
 class SumNode : public MultiNode

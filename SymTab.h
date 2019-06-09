@@ -7,6 +7,7 @@
 #include "StrBuf.h"
 #include "HTable.h"
 #include "dynarray.h"
+#include <vector>
 
 class SymbolTable		//符号表
 { 
@@ -16,14 +17,13 @@ public:
 
     SymbolTable ();
 
-    int ForceAdd (char const * str);
+    std::size_t ForceAdd (char const * str);
 	int Find (char const * str) const;
 	char const * GetString (int id) const;
 private:
 	HTable			_htab;	 // string -> ids
 	int				_maxId;
     //字符串在缓冲器中的偏移
-    DynArray<int>	 _offStr; // id -> offset
-	int				_curId;
+    std::vector<int> _offStr; // id -> offset
 	StringBuffer	_strBuf; // offset -> string
 };

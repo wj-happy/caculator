@@ -108,7 +108,7 @@ double VarNode::Calc() const
 
 void VarNode::Assign (double val)
 {
-    _store.SetValue (_id, val);
+    _store.AddValue (_id, val);
 }
 
 bool VarNode::IsLvalue () const
@@ -124,24 +124,20 @@ double UPlusNode::Calc() const
 }
 
 MultiNode::MultiNode(Node *pNode)
-    : _aChild(0)
-    , _aIsPositive(false)
-    , _iCur(0)
 {
     AddChild(pNode, true);
 }
 
 void MultiNode::AddChild(Node *pNode, bool isPositive)
 {
-    _aChild.Set(_iCur, pNode);
-    _aIsPositive.Set(_iCur, isPositive);
-    ++_iCur;
+    _aChild.push_back(pNode);
+    _aIsPositive.push_back(isPositive);
 }
 
 double SumNode::Calc() const
 {
     double sum = 0.0;
-    for ( int i=0; i<_iCur; ++i )
+    for ( int i=0; i<_aChild.size(); ++i )
     {
         double val = _aChild[i]->Calc();
         if ( _aIsPositive[i] )
@@ -160,7 +156,7 @@ double SumNode::Calc() const
 double ProductNode::Calc() const
 {
     double sum = 1;
-    for ( int i=0; i<_iCur; ++i )
+    for ( int i=0; i<_aChild.size(); ++i )
     {
         double val = _aChild[i]->Calc();
         if ( _aIsPositive[i] )

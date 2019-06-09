@@ -3,17 +3,17 @@
 #include <cassert>
 
 SymbolTable::SymbolTable()
-    : _curId(0),
-      _htab(hTabSize), _offStr(0)
+    : _htab(hTabSize), _offStr(0)
 {
 }
 
-int SymbolTable::ForceAdd (char const * str)
+size_t SymbolTable::ForceAdd(char const * str)
 {
     int offset = _strBuf.Add(str);
-    _offStr.Set(_curId, offset);
-    _htab.Add(str, _curId);
-    return _curId++;    //后自增
+    std::size_t id = _offStr.size();
+    _offStr.push_back(offset);
+    _htab.Add(str, id);
+    return id;
 }
 
 // 不暴露哈希表内部细节
@@ -33,7 +33,7 @@ int SymbolTable::Find (char const * str) const
 
 char const * SymbolTable::GetString (int id) const
 {
-	assert ((id >= 0) && (id < _curId));
+    assert ((id >= 0) && (id < _offStr.size()));
     int offStr = _offStr[id];
 	return _strBuf.GetString (offStr);
 }
