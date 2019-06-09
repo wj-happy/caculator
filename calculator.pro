@@ -5,7 +5,7 @@ CONFIG -= qt
 
 HEADERS += \
     stack.h \
-    stackseq.h \
+    #stackseq.h \
     input.h \
     calculator.h \
     Tree.h \
@@ -15,21 +15,18 @@ HEADERS += \
     List.h \
     Store.h \
     SymTab.h \
-    FunTab.h \
-    idseq.h
+    FunTab.h
 
 SOURCES += \
-    stack.cpp \
-    stackseq.cpp \
+    #stack.cpp \
+    #stackseq.cpp \
     input.cpp \
     main.cpp \
     calculator.cpp \
     Tree.cpp \
     Scanner.cpp \
     parser.cpp \
-    List.cpp \
     Store.cpp \
     SymTab.cpp \
     HTable.cpp \
-    FunTab.cpp \
-    idseq.cpp
+    FunTab.cpp

@@ -9,11 +9,11 @@ class Calculator
 public:
     bool Execute(const Input & input);
 
-    IStack const & GetStack();
+    IStack<int> const & GetStack();
 
 private:
     int Calculate(int num1, int num2, int token) const;
-    IStack _stack;
+    IStack<int> _stack;
 };
 
 #endif // CALCULATOR_H

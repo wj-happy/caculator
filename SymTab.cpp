@@ -1,5 +1,4 @@
 #include "SymTab.h"
-#include "idseq.h"
 #include <iostream>
 #include <cassert>
 
@@ -38,9 +37,10 @@ int SymbolTable::ForceAdd (char const * str)
 // 不暴露哈希表内部细节
 int SymbolTable::Find (char const * str) const
 {
-    for ( IdSeq seq(_htab, str); !seq.AtEnd(); seq.Advance() )
+    for ( HTable::Seq seq(_htab, str);
+          !seq.AtEnd(); seq.Advance() )
     {
-        int id = seq.GetId();
+        int id = seq.GetValue();
         int offStr = _offStr [id];
         if (_strBuf.IsEqual (offStr, str))
             return id;

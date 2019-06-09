@@ -1,7 +1,7 @@
 #include "HTable.h"
 #include <cassert>
 
-List const & HTable::Find (char const * str) const
+List<int> const & HTable::Find (char const * str) const
 {
 	int i = hash (str);	
 	return _aList [i];	

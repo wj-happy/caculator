@@ -51,7 +51,7 @@ bool Calculator::Execute(const Input &input)
     return status;
 }
 
-const IStack &Calculator::GetStack()
+const IStack<int> &Calculator::GetStack()
 {
     return _stack;
 }
