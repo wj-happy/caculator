@@ -7,10 +7,12 @@
  */
 
 #include "FunTab.h"
-#include "dynarray.h"
+//#include "dynarray.h"
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <memory>
+#include "autovector.h"
 
 class Store;
 
@@ -46,37 +48,39 @@ private:
 class BinNode: public Node
 {
 public:
-	BinNode (Node * pLeft, Node * pRight)
+    BinNode (std::auto_ptr<Node> & pLeft, std::auto_ptr<Node> & pRight)
 		: _pLeft (pLeft), _pRight (pRight) {}
-	~BinNode ();
 protected: 
-	Node * const _pLeft;
-	Node * const _pRight;
+    std::auto_ptr<Node> _pLeft;
+    std::auto_ptr<Node> _pRight;
 };
 
 // 一般性多节点
 class MultiNode : public Node
 {
 public:
-    MultiNode(Node *pNode);
-    ~MultiNode() {}
-    void AddChild(Node *pNode, bool isPositive);
+    MultiNode(std::auto_ptr<Node> & pNode);
+    void AddChild(std::auto_ptr<Node> & pNode, bool isPositive);
 protected:
-    std::vector<Node*> _aChild;
+
+    //这种方式有问题
+    //std::vector<std::auto_ptr<Node> > _aChild;
+
+    auto_vector<Node> _aChild;
     std::vector<bool> _aIsPositive;
 };
 
 class SumNode : public MultiNode
 {
 public:
-    SumNode(Node *pNode) : MultiNode(pNode) {}
+    SumNode(std::auto_ptr<Node> & pNode) : MultiNode(pNode) {}
     double Calc() const;
 };
 
 class ProductNode : public MultiNode
 {
 public:
-    ProductNode(Node *pNode) : MultiNode(pNode) {}
+    ProductNode(std::auto_ptr<Node> & pNode) : MultiNode(pNode) {}
     double Calc() const;
 };
 
@@ -84,7 +88,7 @@ public:
 class AddNode: public BinNode
 {
 public:
-	AddNode (Node * pLeft, Node * pRight)
+    AddNode (std::auto_ptr<Node> & pLeft, std::auto_ptr<Node> & pRight)
 		: BinNode (pLeft, pRight) {}
 	double Calc () const;
     void Print(int indent=0) const;
@@ -93,7 +97,7 @@ public:
 class SubNode: public BinNode
 {
 public:
-    SubNode (Node * pLeft, Node * pRight)
+    SubNode (std::auto_ptr<Node> & pLeft, std::auto_ptr<Node> & pRight)
         : BinNode (pLeft, pRight) {}
     double Calc () const;
 };
@@ -102,7 +106,7 @@ public:
 class MultNode: public BinNode
 {
 public:
-	MultNode (Node * pLeft, Node * pRight)
+    MultNode (std::auto_ptr<Node> & pLeft, std::auto_ptr<Node> & pRight)
 		: BinNode (pLeft, pRight) {}
 	double Calc () const;
 };
@@ -110,7 +114,7 @@ public:
 class DivideNode: public BinNode
 {
 public:
-    DivideNode (Node * pLeft, Node * pRight)
+    DivideNode (std::auto_ptr<Node> & pLeft, std::auto_ptr<Node> & pRight)
         : BinNode (pLeft, pRight) {}
     double Calc () const;
 };
@@ -132,17 +136,16 @@ private:
 class UniNode: public Node
 {
 public:
-    UniNode (Node * pChild)
-        : _pChild (pChild) {}
-    ~UniNode ();
+    UniNode (std::auto_ptr<Node> & pChild)
+        : _pChild (pChild) {}       //转移构造函数
 protected:
-    Node * const _pChild;
+    std::auto_ptr<Node> _pChild;
 };
 
 class AssignNode : public BinNode
 {
 public:
-    AssignNode (Node * pLeft, Node * pRight)
+    AssignNode (std::auto_ptr<Node> & pLeft, std::auto_ptr<Node> & pRight)
         : BinNode (pLeft, pRight)
     {
         assert (pLeft->IsLvalue ());
@@ -153,7 +156,7 @@ public:
 class FunNode: public UniNode
 {
 public:
-    FunNode (PtrFun pFun, Node * pNode)
+    FunNode (PtrFun pFun, std::auto_ptr<Node> & pNode)
         : UniNode (pNode), _pFun (pFun)
     {}
     double Calc () const;
@@ -164,7 +167,7 @@ private:
 class UMinusNode: public UniNode
 {
 public:
-    UMinusNode (Node * pNode)
+    UMinusNode (std::auto_ptr<Node> & pNode)
         : UniNode (pNode) {}
     double Calc () const;
 };
@@ -173,7 +176,7 @@ public:
 class UPlusNode : public UniNode
 {
 public:
-    UPlusNode (Node * pNode)
+    UPlusNode (std::auto_ptr<Node> & pNode)
         : UniNode(pNode) {}
     double Calc () const;
 };

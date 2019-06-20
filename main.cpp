@@ -10,37 +10,48 @@ const int maxBuf = 100;
 
 int main()
 {
-    char buf[maxBuf];
-    Status status;
-    SymbolTable symTab;
-    FunctionTable funTab(symTab);
-    Store store(symTab);
-
-    do
+    try
     {
-        cout << "> ";
-        cin.getline(buf, maxBuf);
-        Scanner scanner(buf);
-        if ( !scanner.IsEmpty() )
+        char buf[maxBuf];
+        Status status;
+        SymbolTable symTab;
+        FunctionTable funTab(symTab);
+        Store store(symTab);
+
+        do
         {
-            Parser parser(scanner, store, funTab, symTab);
-            status = parser.Parse();
-            //计算和打印分离
-            if ( stOk == status )
+            cout << "> ";
+            cin.getline(buf, maxBuf);
+            Scanner scanner(buf);
+            if ( !scanner.IsEmpty() )
             {
-                double result = parser.Calculate();
-                std::cout << "result is " << result << std::endl;
+                Parser parser(scanner, store, funTab, symTab);
+                status = parser.Parse();
+                //计算和打印分离
+                if ( stOk == status )
+                {
+                    double result = parser.Calculate();
+                    std::cout << "result is " << result << std::endl;
+                }
+                else
+                {
+                    std::cout << "Syntax error.\n";
+                }
             }
             else
             {
-                std::cout << "Syntax error.\n";
+                break;
             }
-        }
-        else
-        {
-            break;
-        }
-    } while(status != stQuit);
+        } while(status != stQuit);
+    }
+    catch (std::bad_alloc)
+    {
+        std::cerr << "Out of memory\n";
+    }
+    catch (...)
+    {
+        std::cerr << "Internal error\n";
+    }
 
     return 0;
 }

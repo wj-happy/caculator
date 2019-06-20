@@ -1,7 +1,7 @@
 #include "Parser.h"
+#include "Tree.h"
 #include "Scanner.h"
 #include "SymTab.h"
-#include "Tree.h"
 #include <iostream>
 
 Parser::Parser (Scanner & scanner,
@@ -9,26 +9,11 @@ Parser::Parser (Scanner & scanner,
                 FunctionTable & funTab,
                 SymbolTable & symTab)
   : _scanner (scanner),
-    _pTree (0),
     _status (stOk),
     _funTab (funTab),
     _store (store),
     _symTab (symTab)
 {}
-
-Parser::~Parser ()
-{
-    delete _pTree;
-}
-
-void Parser::Execute()
-{
-    if (_pTree)
-    {
-        double result = _pTree->Calc();
-        std::cout<<"  "<<result<<std::endl;
-    }
-}
 
 Status Parser::Parse()
 {
@@ -45,23 +30,35 @@ Status Parser::Parse()
 double Parser::Calculate() const
 {
     assert(_status == stOk);
-    assert(_pTree != 0);
+    assert(_pTree.get() != 0);
     return _pTree->Calc();
 }
 
-Node * Parser::Expr()
+std::auto_ptr<Node> Parser::Expr()
 {
-    Node *pNode = Term();
+    std::auto_ptr<Node> pNode = Term();
+    if ( pNode.get() == 0 )
+    {
+        return pNode;
+    }
+
     EToken token = _scanner.Token();
 
     if (token == tPlus || token == tMinus)
     {
-        MultiNode *pMultiNode = new SumNode(pNode);
+        std::auto_ptr<MultiNode> pMultiNode(new SumNode(pNode));
         do
         {
             _scanner.Accept();
-            Node *pRight = Term();
+            std::auto_ptr<Node> pRight = Term();
+            if ( pRight.get() == 0 )
+            {
+                return pNode;
+            }
+
+            //std::cout << "---before: " << pRight.get();
             pMultiNode->AddChild(pRight, (token==tPlus));
+            //std::cout << "---after: " << pRight.get();
             token = _scanner.Token();
         } while(token == tPlus || token == tMinus);
 
@@ -70,15 +67,18 @@ Node * Parser::Expr()
     else if (token == tAssign)
     {
         _scanner.Accept ();
-        Node * pRight = Expr ();
+        std::auto_ptr<Node> pRight = Expr ();
+        if ( pRight.get() == 0 )
+        {
+            return pNode;
+        }
         if (pNode->IsLvalue ())
         {
-            pNode = new AssignNode (pNode, pRight);
+            pNode = std::auto_ptr<Node>(new AssignNode (pNode, pRight));
         }
         else
         {
             _status = stError;
-            delete pNode;
             pNode = Expr ();
         }
     }
@@ -86,19 +86,19 @@ Node * Parser::Expr()
     return pNode;
 }
 
-Node * Parser::Term()
+std::auto_ptr<Node> Parser::Term()
 {
-    Node *pNode = Factor();
+    std::auto_ptr<Node> pNode = Factor();
 
     EToken token = _scanner.Token();
 
     if (token == tMult || token == tDivide)
     {
-        MultiNode *pMultiNode = new ProductNode(pNode);
+        std::auto_ptr<MultiNode> pMultiNode(new ProductNode(pNode));
         do
         {
             _scanner.Accept();
-            Node *pRight = Factor();
+            std::auto_ptr<Node> pRight = Factor();
             pMultiNode->AddChild(pRight, (token==tMult));
             token = _scanner.Token();
         } while(token==tMult || token==tDivide);
@@ -109,9 +109,9 @@ Node * Parser::Term()
     return pNode;
 }
 
-Node * Parser::Factor()
+std::auto_ptr<Node> Parser::Factor()
 {
-    Node *pNode;
+    auto_ptr<Node> pNode;
     EToken token = _scanner.Token();
 
     if (token == tLParen)
@@ -129,7 +129,7 @@ Node * Parser::Factor()
     }
     else if (token == tNumber)
     {
-        pNode = new NumNode(_scanner.Number());
+        pNode = auto_ptr<Node>(new NumNode(_scanner.Number()));
         _scanner.Accept();
     }
     else if (token == tIdent)
@@ -153,7 +153,7 @@ Node * Parser::Factor()
 
             if (id != SymbolTable::idNotFound && id < _funTab.Size ())
             {
-                pNode = new FunNode (_funTab.GetFun (id), pNode);
+                pNode = auto_ptr<Node>(new FunNode (_funTab.GetFun (id), pNode));
             }
             else
             {
@@ -169,24 +169,25 @@ Node * Parser::Factor()
             }
 
             assert( id != SymbolTable::idNotFound );
-            pNode = new VarNode(id, _store);
+            pNode = auto_ptr<Node>(new VarNode(id, _store));
         }
     }
     else if (token == tMinus)   //一元减
     {
         _scanner.Accept();
-        pNode = new UMinusNode(Factor());
+        auto_ptr<Node> ptr = Factor();
+        pNode = auto_ptr<Node>(new UMinusNode(ptr));
     }
     else if ( token == tPlus )  //一元加
     {
         _scanner.Accept();
-        pNode = new UPlusNode(Factor());
+        auto_ptr<Node> ptr = Factor();
+        pNode = auto_ptr<Node>(new UPlusNode( ptr ));
     }
     else
     {
         _scanner.Accept();
         _status = stError;
-        pNode = 0;
     }
 
     return pNode;

@@ -4,26 +4,21 @@
  * 和数学函数相关
  */
 
-#include "StrBuf.h"
-#include "HTable.h"
 #include "dynarray.h"
 #include <vector>
+#include <map>
+#include <string>
 
 class SymbolTable		//符号表
 { 
-    enum { hTabSize = 65 };
 public: 
-    enum { idNotFound = -1 };
+    static const std::size_t idNotFound = 0xffffffff;
 
     SymbolTable ();
 
     std::size_t ForceAdd (char const * str);
-	int Find (char const * str) const;
-	char const * GetString (int id) const;
+    std::size_t Find (char const * str) const;
 private:
-	HTable			_htab;	 // string -> ids
-	int				_maxId;
-    //字符串在缓冲器中的偏移
-    std::vector<int> _offStr; // id -> offset
-	StringBuffer	_strBuf; // offset -> string
+    std::map<std::string, std::size_t> _dictionary;
+    std::size_t _id;
 };

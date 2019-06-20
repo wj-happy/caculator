@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 
@@ -133,7 +134,7 @@ int Scanner::GetSymbolName(char *strOut, int lenBuf)
 {
     assert(lenBuf > maxSymLen);
     assert(_lenSymbol < lenBuf);
-    std::strncpy(strOut, &_buf[_iSymbol], _lenSymbol);
+    strncpy(strOut, &_buf[_iSymbol], _lenSymbol);
     strOut[_lenSymbol] = '\0';
     return _lenSymbol;
 }

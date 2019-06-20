@@ -1,39 +1,29 @@
 #include "SymTab.h"
 #include <iostream>
 #include <cassert>
+#include <iterator>
 
 SymbolTable::SymbolTable()
-    : _htab(hTabSize), _offStr(0)
+    : _id(0)
 {
 }
 
 size_t SymbolTable::ForceAdd(char const * str)
 {
-    int offset = _strBuf.Add(str);
-    std::size_t id = _offStr.size();
-    _offStr.push_back(offset);
-    _htab.Add(str, id);
-    return id;
+    std::string s(str);
+    _dictionary[s] = _id;
+    return _id++;
 }
 
 // 不暴露哈希表内部细节
-int SymbolTable::Find (char const * str) const
+size_t SymbolTable::Find(char const * str) const
 {
-    for ( HTable::Seq seq(_htab, str);
-          !seq.AtEnd(); seq.Advance() )
+    std::map<std::string, std::size_t>::const_iterator it;
+    it = _dictionary.find(str);
+    if ( it != _dictionary.end() )
     {
-        int id = seq.GetValue();
-        int offStr = _offStr[id];
-        if (_strBuf.IsEqual (offStr, str))
-            return id;
+        return it->second;
     }
 
 	return idNotFound;
-}
-
-char const * SymbolTable::GetString (int id) const
-{
-    assert ((id >= 0) && (id < _offStr.size()));
-    int offStr = _offStr[id];
-	return _strBuf.GetString (offStr);
 }

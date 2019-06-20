@@ -2,6 +2,7 @@
 #define PARSER_H
 
 #include <iostream>
+#include <memory>
 using namespace std;
 
 class Node;
@@ -23,20 +24,18 @@ public:
     Parser (Scanner & scanner, Store & store,
             FunctionTable & funTab,
             SymbolTable & symTab);
-    ~Parser();
 
     Status Parse();
 
     double Calculate() const;
 
 private:
-    Node * Expr();
-    Node * Term();
-    Node * Factor();
-    void   Execute ();
+    std::auto_ptr<Node> Expr();
+    std::auto_ptr<Node> Term();
+    std::auto_ptr<Node> Factor();
 
     Scanner			& _scanner;
-    Node			* _pTree;
+    std::auto_ptr<Node> _pTree;
     Status           _status;
     Store			& _store;
     FunctionTable	& _funTab;

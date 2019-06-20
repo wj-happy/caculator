@@ -16,20 +16,21 @@ HEADERS += \
     Store.h \
     SymTab.h \
     FunTab.h \
-    dynarray.h \
-    StrBuf.h
+    #dynarray.h \
+    StrBuf.h \
+    autovector.h
 
 SOURCES += \
     #stack.cpp \
     #stackseq.cpp \
     input.cpp \
-    main.cpp \
     calculator.cpp \
     Tree.cpp \
     Scanner.cpp \
-    parser.cpp \
     Store.cpp \
     SymTab.cpp \
     HTable.cpp \
     FunTab.cpp \
-    StrBuf.cpp
+    StrBuf.cpp \
+    parser.cpp \
+    main.cpp

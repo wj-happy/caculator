@@ -17,17 +17,6 @@ double NumNode::Calc () const
 	return _num;
 }
 
-BinNode::~BinNode ()
-{
-	delete _pLeft;
-	delete _pRight;
-}
-
-UniNode::~UniNode ()
-{
-    delete _pChild;
-}
-
 double AddNode::Calc () const
 {
 	std::cout << "Adding\n";
@@ -123,12 +112,12 @@ double UPlusNode::Calc() const
     return _pChild->Calc();
 }
 
-MultiNode::MultiNode(Node *pNode)
+MultiNode::MultiNode(std::auto_ptr<Node> &pNode)
 {
     AddChild(pNode, true);
 }
 
-void MultiNode::AddChild(Node *pNode, bool isPositive)
+void MultiNode::AddChild(std::auto_ptr<Node> &pNode, bool isPositive)
 {
     _aChild.push_back(pNode);
     _aIsPositive.push_back(isPositive);
